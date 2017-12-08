@@ -28,6 +28,8 @@ class HanSequenceLabellingModel():
         self.is_training = is_training
         self.scope = scope
         self.learning_rate = learning_rate
+        self.word_att = None
+        self.sent_att = None        
 
         self.create_placeholders()
         self.word_level_output
@@ -82,7 +84,7 @@ class HanSequenceLabellingModel():
                     scope=scope)
 
                 with tf.variable_scope('attention') as scope:
-                    word_level_output = task_specific_attention(
+                    word_level_output, self.word_att = task_specific_attention(
                         word_encoder_output,
                         self.word_output_size,
                         scope=scope)
@@ -106,7 +108,7 @@ class HanSequenceLabellingModel():
                     self.sentence_cell, self.sentence_cell, sentence_inputs, self.sentence_lengths, scope=scope)
 
                 with tf.variable_scope('attention') as scope:
-                    sentence_level_output = task_specific_attention(
+                    sentence_level_output, self.sent_att = task_specific_attention(
                         sentence_encoder_output, self.sentence_output_size, scope=scope)
 
                 with tf.variable_scope('dropout'):
